@@ -1,0 +1,37 @@
+<ContentPage
+    x:Class="MyGamifiedTodoList.Views.NewTaskPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:MyGamifiedTodoList.ViewModels"
+    Title="New Task">
+
+    <ContentPage.BindingContext>
+        <viewModels:NewTaskViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="10">
+        <!-- Top: Menu bar (handled by AppShell, so nothing needed here) -->
+        <!-- Middle: Form -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="10">
+                <Entry Placeholder="Title" Text="{Binding Title}" />
+                <Editor Placeholder="Description" Text="{Binding Description}" AutoSize="TextChanges" />
+
+                <Label Text="Difficulty" FontAttributes="Bold"/>
+                <Picker ItemsSource="{Binding Difficulties}" SelectedItem="{Binding SelectedDifficulty}" />
+
+                <Label Text="Priority" FontAttributes="Bold"/>
+                <Picker ItemsSource="{Binding Priorities}" SelectedItem="{Binding SelectedPriority}" />
+
+                <Label Text="XP: " FontAttributes="Bold" />
+                <Label Text="{Binding ExperiencePoints}" FontSize="Large" TextColor="Green" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom: Buttons -->
+        <HorizontalStackLayout Grid.Row="2" Spacing="10" HorizontalOptions="Center">
+            <Button Text="Add Task" Command="{Binding AddTaskCommand}" />
+            <Button Text="Cancel" Command="{Binding CancelCommand}" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>
