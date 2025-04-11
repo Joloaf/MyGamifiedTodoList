@@ -48,6 +48,9 @@ namespace MyGamifiedTodoList.ViewModels
         {
             if (Tasks.Contains(task))
             {
+                // Mark as completed
+                task.IsCompleted = true;
+
                 // Send it to the Archive page
                 MessagingCenter.Send(this, "TaskCompleted", task);
 
@@ -55,6 +58,7 @@ namespace MyGamifiedTodoList.ViewModels
                 Tasks.Remove(task);
             }
         }
+
 
         // Placeholder if you want to implement a Remove/Delete action later (e.g., swiped left)
         public void RemoveTask(TaskModel task)

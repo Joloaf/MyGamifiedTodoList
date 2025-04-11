@@ -11,6 +11,7 @@ namespace MyGamifiedTodoList
             // Register routes
             Routing.RegisterRoute(nameof(NewTaskPage), typeof(NewTaskPage));
             Routing.RegisterRoute(nameof(TaskDetailsPage), typeof(TaskDetailsPage));
+            Routing.RegisterRoute(nameof(ArchivePage), typeof(ArchivePage));
         }
     }
 }
