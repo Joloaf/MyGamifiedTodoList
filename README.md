@@ -1,0 +1,1 @@
+A very basic todo list that saves the items on the list to a MongoDB database and rewards experience points as you complete tasks. This is the very first step of a personal project that I intend to keep working on just to reach my probably extremely lofty goals.
