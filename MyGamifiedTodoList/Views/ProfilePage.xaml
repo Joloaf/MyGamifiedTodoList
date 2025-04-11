@@ -9,5 +9,7 @@
         <Label Text="{Binding TotalExperiencePoints}" FontSize="Large" TextColor="Green" />
         <Label Text="Completed Tasks:" FontAttributes="Bold" />
         <Label Text="{Binding CompletedTasksCount}" FontSize="Large" TextColor="Blue" />
+        <Label Text="{Binding RandomQuote}" FontSize="Medium" TextColor="Gray" 
+       HorizontalOptions="Center" Margin="0,20,0,0" />
     </VerticalStackLayout>
 </ContentPage>

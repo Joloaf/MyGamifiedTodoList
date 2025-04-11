@@ -1,6 +1,8 @@
 ﻿using MyGamifiedTodoList.Models;
 using System.Collections.ObjectModel;
 using MyGamifiedTodoList.Services;
+using MyGamifiedTodoList.DataManager;
+using System.Threading.Tasks;
 
 namespace MyGamifiedTodoList.ViewModels;
 
@@ -9,6 +11,23 @@ public class ProfileViewModel : BaseViewModel
     private readonly MongoDBService _mongoService;
     private int _totalExperiencePoints;
     private int _completedTasksCount;
+    private string _randomQuote;
+
+    public string RandomQuote
+    {
+        get => _randomQuote;
+        set => SetProperty(ref _randomQuote, value);
+    }
+
+    public async Task LoadRandomQuoteAsync()
+    {
+        var quotes = await MotivationalQuoteManager.GetQuote("");
+        if (quotes != null && quotes.Count > 0)
+        {
+            var quote = quotes[0];
+            RandomQuote = $"\"{quote.quote}\" - {quote.author}";
+        }
+    }
 
     public int TotalExperiencePoints
     {
