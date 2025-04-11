@@ -8,9 +8,9 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="Auto,*,Auto">
-        <!-- Top Menu is handled by Shell -->
+        <!-- Top cell, where the Shell lives...-->
 
-        <!-- Middle Content -->
+        <!-- Middle cell, where the Content frolics in the sun... -->
         <CollectionView Grid.Row="1" ItemsSource="{Binding Tasks}" SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -45,7 +45,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Bottom Add Button -->
+        <!-- Bottom cell, where anything else important might get to stay... -->
         <StackLayout Grid.Row="2" Padding="10">
             <Button Text="Add Task" Clicked="OnAddTaskClicked"/>
         </StackLayout>

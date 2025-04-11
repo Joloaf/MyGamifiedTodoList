@@ -1,4 +1,4 @@
-using MyGamifiedTodoList.Models; // Add this namespace
+using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.Views;
 using MyGamifiedTodoList.ViewModels;
 

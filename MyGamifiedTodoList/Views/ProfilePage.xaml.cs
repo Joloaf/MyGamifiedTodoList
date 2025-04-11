@@ -1,9 +1,22 @@
-namespace MyGamifiedTodoList.Views;
+using MyGamifiedTodoList.ViewModels;
 
-public partial class ProfilePage : ContentPage
+namespace MyGamifiedTodoList.Views
 {
-    public ProfilePage()
+    public partial class ProfilePage : ContentPage
     {
-        InitializeComponent();
+        private readonly ProfileViewModel _viewModel;
+
+        public ProfilePage()
+        {
+            InitializeComponent();
+            _viewModel = new ProfileViewModel();
+            BindingContext = _viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.LoadRandomQuoteAsync();
+        }
     }
 }
