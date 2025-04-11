@@ -3,6 +3,7 @@ using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.ViewModels;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+using MyGamifiedTodoList.Views;
 
 namespace MyGamifiedTodoList.ViewModels
 {
@@ -10,16 +11,37 @@ namespace MyGamifiedTodoList.ViewModels
     {
         public ObservableCollection<TaskModel> Tasks { get; set; }
 
+        public ICommand ViewTaskCommand { get; }
+        public ICommand CompleteTaskCommand { get; }
+        public ICommand RemoveTaskCommand { get; }
+
         public TodoListViewModel()
         {
             Tasks = new ObservableCollection<TaskModel>();
+            ViewTaskCommand = new Command<TaskModel>(OnViewTask);
+            CompleteTaskCommand = new Command<TaskModel>(CompleteTask);
+            RemoveTaskCommand = new Command<TaskModel>(RemoveTask);
 
-            // Listen for new tasks from the NewTaskViewModel
+            // Subscribe to the AddTask message
             MessagingCenter.Subscribe<NewTaskViewModel, TaskModel>(this, "AddTask", (sender, task) =>
             {
                 Tasks.Add(task);
             });
         }
+
+        // Inside the OnViewTask method, no changes are needed as the issue is with the missing reference.
+        private async void OnViewTask(TaskModel task)
+        {
+            if (task == null)
+                return;
+
+            // Navigate to TaskDetailsPage and pass the selected task
+            await Shell.Current.GoToAsync(nameof(TaskDetailsPage), true, new Dictionary<string, object>
+            {
+                { "Task", task }
+            });
+        }
+
 
         // Call this when a task is marked complete (e.g., swiped right)
         public void CompleteTask(TaskModel task)

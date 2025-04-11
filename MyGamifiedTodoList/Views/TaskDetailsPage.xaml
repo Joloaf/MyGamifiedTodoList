@@ -1,0 +1,19 @@
+<ContentPage
+    x:Class="MyGamifiedTodoList.Views.TaskDetailsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:MyGamifiedTodoList.ViewModels">
+    <StackLayout Padding="20">
+        <Label Text="Task Details" FontSize="24" FontAttributes="Bold" />
+        <Label Text="Title:" FontAttributes="Bold" />
+        <Label Text="{Binding Task.Title}" />
+        <Label Text="Description:" FontAttributes="Bold" />
+        <Label Text="{Binding Task.Description}" />
+        <Label Text="Difficulty:" FontAttributes="Bold" />
+        <Label Text="{Binding Task.Difficulty}" />
+        <Label Text="Priority:" FontAttributes="Bold" />
+        <Label Text="{Binding Task.Priority}" />
+        <Label Text="Experience Points:" FontAttributes="Bold" />
+        <Label Text="{Binding Task.ExperiencePoints}" />
+    </StackLayout>
+</ContentPage>

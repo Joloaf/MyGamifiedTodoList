@@ -9,6 +9,6 @@ public partial class TodoListPage : ContentPage
 
     private async void OnAddTaskClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new NewTaskPage());
+        await Shell.Current.GoToAsync(nameof(NewTaskPage));
     }
 }
