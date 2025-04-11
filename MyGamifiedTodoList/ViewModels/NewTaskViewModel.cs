@@ -1,94 +1,127 @@
-﻿using System.Collections.ObjectModel;
+﻿// MyGamifiedTodoList/ViewModels/NewTaskViewModel.cs
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.Views;
+using MyGamifiedTodoList.Services;
 
-namespace MyGamifiedTodoList.ViewModels;
-
-public class NewTaskViewModel : BaseViewModel
+namespace MyGamifiedTodoList.ViewModels
 {
-    public string Title { get; set; }
-    public string Description { get; set; }
-
-    public ObservableCollection<string> Difficulties { get; } = new() { "Easy", "Normal", "Hard" };
-    public ObservableCollection<string> Priorities { get; } = new() { "Urgent", "Normal Speed", "Casual" };
-
-    private string selectedDifficulty;
-    public string SelectedDifficulty
+    public class NewTaskViewModel : BaseViewModel
     {
-        get => selectedDifficulty;
-        set
+        private readonly MongoDBService _mongoService;
+
+        private string _selectedDifficulty;
+        private string _selectedPriority;
+        private int _experiencePoints;
+
+        public string Title { get; set; }
+        public string Description { get; set; }
+
+        public string SelectedDifficulty
         {
-            if (SetProperty(ref selectedDifficulty, value))
-                UpdateExperiencePoints();
+            get => _selectedDifficulty;
+            set
+            {
+                if (_selectedDifficulty != value)
+                {
+                    _selectedDifficulty = value;
+                    OnPropertyChanged();
+                    CalculateExperiencePoints();
+                }
+            }
         }
-    }
 
-    private string selectedPriority;
-    public string SelectedPriority
-    {
-        get => selectedPriority;
-        set
+        public string SelectedPriority
         {
-            if (SetProperty(ref selectedPriority, value))
-                UpdateExperiencePoints();
+            get => _selectedPriority;
+            set
+            {
+                if (_selectedPriority != value)
+                {
+                    _selectedPriority = value;
+                    OnPropertyChanged();
+                    CalculateExperiencePoints();
+                }
+            }
         }
-    }
 
-    private int experiencePoints;
-    public int ExperiencePoints
-    {
-        get => experiencePoints;
-        set => SetProperty(ref experiencePoints, value);
-    }
-
-    public ICommand AddTaskCommand { get; }
-    public ICommand CancelCommand { get; }
-
-    public NewTaskViewModel()
-    {
-        AddTaskCommand = new Command(OnAddTask);
-        CancelCommand = new Command(OnCancel);
-    }
-
-    private void UpdateExperiencePoints()
-    {
-        int difficultyXP = SelectedDifficulty switch
+        public int ExperiencePoints
         {
-            "Easy" => 10,
-            "Normal" => 20,
-            "Hard" => 30,
-            _ => 0
-        };
+            get => _experiencePoints;
+            set
+            {
+                if (_experiencePoints != value)
+                {
+                    _experiencePoints = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        int priorityXP = SelectedPriority switch
+        public ObservableCollection<string> Difficulties { get; }
+        public ObservableCollection<string> Priorities { get; }
+
+        public ICommand AddTaskCommand { get; }
+        public ICommand CancelCommand { get; }
+
+        public NewTaskViewModel()
         {
-            "Casual" => 5,
-            "Normal Speed" => 10,
-            "Urgent" => 15,
-            _ => 0
-        };
+            _mongoService = Microsoft.Maui.Controls.DependencyService.Get<MongoDBService>();
 
-        ExperiencePoints = difficultyXP + priorityXP;
-    }
+            AddTaskCommand = new Command(OnAddTask);
+            CancelCommand = new Command(OnCancel);
 
-    private async void OnAddTask()
-    {
-        var newTask = new TaskModel
+            // Initialize collections
+            Difficulties = new ObservableCollection<string> { "Easy", "Normal", "Hard" };
+            Priorities = new ObservableCollection<string> { "Low", "Normal", "High" };
+
+            // Default values
+            SelectedDifficulty = "Normal";
+            SelectedPriority = "Normal";
+        }
+
+        private void CalculateExperiencePoints()
         {
-            Title = Title,
-            Description = Description,
-            Difficulty = SelectedDifficulty,
-            Priority = SelectedPriority,
-            ExperiencePoints = ExperiencePoints
-        };
+            int difficultyPoints = SelectedDifficulty switch
+            {
+                "Easy" => 10,
+                "Normal" => 20,
+                "Hard" => 30,
+                _ => 0
+            };
 
-        MessagingCenter.Send(this, "AddTask", newTask); // Push task to TodoListViewModel
-        await Shell.Current.GoToAsync(".."); // Go back
-    }
+            int priorityPoints = SelectedPriority switch
+            {
+                "Low" => 5,
+                "Normal" => 10,
+                "High" => 15,
+                _ => 0
+            };
 
-    private async void OnCancel()
-    {
-        await Shell.Current.GoToAsync(".."); // Go back without adding
+            ExperiencePoints = difficultyPoints + priorityPoints;
+        }
+
+        private async void OnAddTask()
+        {
+            var newTask = new TaskModel
+            {
+                Title = Title,
+                Description = Description,
+                Difficulty = SelectedDifficulty,
+                Priority = SelectedPriority,
+                ExperiencePoints = ExperiencePoints,
+                IsCompleted = false
+            };
+
+            MessagingCenter.Send(this, "AddTask", newTask);
+
+            await Shell.Current.GoToAsync("..");
+        }
+
+        private async void OnCancel()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
     }
 }

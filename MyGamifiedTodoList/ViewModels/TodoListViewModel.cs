@@ -1,6 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿// MyGamifiedTodoList/ViewModels/TodoListViewModel.cs
+using System.Collections.ObjectModel;
 using MyGamifiedTodoList.Models;
-using MyGamifiedTodoList.ViewModels;
+using MyGamifiedTodoList.Services;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using MyGamifiedTodoList.Views;
@@ -9,27 +10,68 @@ namespace MyGamifiedTodoList.ViewModels
 {
     public class TodoListViewModel : BaseViewModel
     {
+        private readonly MongoDBService _mongoService;
+        // Add this property to the TodoListViewModel class
+        private bool _isBusy;
         public ObservableCollection<TaskModel> Tasks { get; set; }
 
         public ICommand ViewTaskCommand { get; }
         public ICommand CompleteTaskCommand { get; }
         public ICommand RemoveTaskCommand { get; }
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
 
         public TodoListViewModel()
         {
+            _mongoService = Microsoft.Maui.Controls.DependencyService.Get<MongoDBService>();
+
             Tasks = new ObservableCollection<TaskModel>();
             ViewTaskCommand = new Command<TaskModel>(OnViewTask);
             CompleteTaskCommand = new Command<TaskModel>(CompleteTask);
             RemoveTaskCommand = new Command<TaskModel>(RemoveTask);
 
             // Subscribe to the AddTask message
-            MessagingCenter.Subscribe<NewTaskViewModel, TaskModel>(this, "AddTask", (sender, task) =>
+            MessagingCenter.Subscribe<NewTaskViewModel, TaskModel>(this, "AddTask", async (sender, task) =>
             {
                 Tasks.Add(task);
+                await _mongoService.CreateTaskAsync(task);
             });
+
+            // Load tasks when the ViewModel is created
+            LoadTasksAsync();
         }
 
-        // Inside the OnViewTask method, no changes are needed as the issue is with the missing reference.
+        private async void LoadTasksAsync()
+        {
+            try
+            {
+                IsBusy = true;
+                var tasks = await _mongoService.GetActiveTasksAsync();
+
+                Tasks.Clear();
+                foreach (var task in tasks)
+                {
+                    Tasks.Add(task);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle errors (log or display message)
+                Console.WriteLine($"Error loading tasks: {ex.Message}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         private async void OnViewTask(TaskModel task)
         {
             if (task == null)
@@ -42,14 +84,15 @@ namespace MyGamifiedTodoList.ViewModels
             });
         }
 
-
-        // Call this when a task is marked complete (e.g., swiped right)
-        public void CompleteTask(TaskModel task)
+        public async void CompleteTask(TaskModel task)
         {
             if (Tasks.Contains(task))
             {
                 // Mark as completed
                 task.IsCompleted = true;
+
+                // Update in MongoDB
+                await _mongoService.CompleteTaskAsync(task.Id);
 
                 // Send it to the Archive page
                 MessagingCenter.Send(this, "TaskCompleted", task);
@@ -59,14 +102,15 @@ namespace MyGamifiedTodoList.ViewModels
             }
         }
 
-
-        // Placeholder if you want to implement a Remove/Delete action later (e.g., swiped left)
-        public void RemoveTask(TaskModel task)
+        public async void RemoveTask(TaskModel task)
         {
             if (Tasks.Contains(task))
             {
+                // Delete from MongoDB
+                await _mongoService.DeleteTaskAsync(task.Id);
+
+                // Remove from UI
                 Tasks.Remove(task);
-                // You could trigger a "TaskDeleted" message here if needed
             }
         }
     }
