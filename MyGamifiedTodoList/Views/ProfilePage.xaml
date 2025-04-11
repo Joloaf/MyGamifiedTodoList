@@ -2,25 +2,12 @@
     x:Class="MyGamifiedTodoList.Views.ProfilePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:MyGamifiedTodoList.ViewModels"
     Title="Profile">
 
-    <ContentPage.BindingContext>
-        <vm:ProfileViewModel />
-    </ContentPage.BindingContext>
-
-    <Grid RowDefinitions="Auto, *, Auto">
-        <!-- Top menu is handled by AppShell -->
-
-        <!-- Middle cell: Profile content -->
-        <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="10">
-            <Label Text="Total Experience Points" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" />
-            <Label Text="{Binding TotalXP}" FontSize="30" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Green" />
-            <Label Text="Tasks Completed" FontSize="16" HorizontalOptions="Center" />
-            <Label Text="{Binding TasksCompleted}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" />
-        </VerticalStackLayout>
-
-        <!-- Bottom options cell (empty for now) -->
-        <Grid Grid.Row="2" HeightRequest="50" />
-    </Grid>
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Label Text="Total Experience Points:" FontAttributes="Bold" />
+        <Label Text="{Binding TotalExperiencePoints}" FontSize="Large" TextColor="Green" />
+        <Label Text="Completed Tasks:" FontAttributes="Bold" />
+        <Label Text="{Binding CompletedTasksCount}" FontSize="Large" TextColor="Blue" />
+    </VerticalStackLayout>
 </ContentPage>

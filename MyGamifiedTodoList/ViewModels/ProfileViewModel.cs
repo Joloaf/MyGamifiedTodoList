@@ -1,32 +1,75 @@
 ﻿using MyGamifiedTodoList.Models;
 using System.Collections.ObjectModel;
+using MyGamifiedTodoList.Services;
 
 namespace MyGamifiedTodoList.ViewModels;
 
 public class ProfileViewModel : BaseViewModel
 {
-    private int _totalXP;
-    private int _tasksCompleted;
+    private readonly MongoDBService _mongoService;
+    private int _totalExperiencePoints;
+    private int _completedTasksCount;
 
-    public int TotalXP
+    public int TotalExperiencePoints
     {
-        get => _totalXP;
-        set => SetProperty(ref _totalXP, value);
+        get => _totalExperiencePoints;
+        set
+        {
+            if (_totalExperiencePoints != value)
+            {
+                _totalExperiencePoints = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
-    public int TasksCompleted
+    public int CompletedTasksCount
     {
-        get => _tasksCompleted;
-        set => SetProperty(ref _tasksCompleted, value);
+        get => _completedTasksCount;
+        set
+        {
+            if (_completedTasksCount != value)
+            {
+                _completedTasksCount = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     public ProfileViewModel()
     {
-        // Subscribe to completed task messages
+        _mongoService = Microsoft.Maui.Controls.DependencyService.Get<MongoDBService>();
+
+        // Subscribe to task updates
         MessagingCenter.Subscribe<TodoListViewModel, TaskModel>(this, "TaskCompleted", (sender, task) =>
         {
-            TotalXP += task.ExperiencePoints; // Add XP from the task
-            TasksCompleted++; // Increment completed tasks
+            UpdateProfileData();
         });
+
+        MessagingCenter.Subscribe<NewTaskViewModel, TaskModel>(this, "AddTask", (sender, task) =>
+        {
+            UpdateProfileData();
+        });
+
+        // Load initial data
+        UpdateProfileData();
+    }
+
+    private async void UpdateProfileData()
+    {
+        try
+        {
+            // Fetch completed tasks
+            var completedTasks = await _mongoService.GetCompletedTasksAsync();
+            CompletedTasksCount = completedTasks.Count;
+
+            // Calculate total Experience Points
+            TotalExperiencePoints = completedTasks.Sum(task => task.ExperiencePoints);
+        }
+        catch (Exception ex)
+        {
+            // Handle errors (log or display message)
+            Console.WriteLine($"Error updating profile data: {ex.Message}");
+        }
     }
 }
