@@ -1,5 +1,4 @@
-﻿// MyGamifiedTodoList/ViewModels/ArchiveViewModel.cs
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.Services;
 
@@ -27,17 +26,14 @@ namespace MyGamifiedTodoList.ViewModels
 
             ArchivedTasks = new ObservableCollection<TaskModel>();
 
-            // Subscribe to completed tasks sent from TodoListViewModel
             MessagingCenter.Subscribe<TodoListViewModel, TaskModel>(this, "TaskCompleted", (sender, task) =>
             {
-                // Add completed task to archived tasks if it's not already there
                 if (!ArchivedTasks.Contains(task))
                 {
                     ArchivedTasks.Add(task);
                 }
             });
 
-            // Load archived tasks when the ViewModel is created
             LoadArchivedTasksAsync();
         }
 
@@ -56,7 +52,6 @@ namespace MyGamifiedTodoList.ViewModels
             }
             catch (Exception ex)
             {
-                // Handle errors (log or display message)
                 Console.WriteLine($"Error loading archived tasks: {ex.Message}");
             }
             finally

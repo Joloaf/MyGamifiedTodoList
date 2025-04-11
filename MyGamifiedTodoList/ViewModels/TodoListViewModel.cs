@@ -1,5 +1,4 @@
-﻿// MyGamifiedTodoList/ViewModels/TodoListViewModel.cs
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.Services;
 using System.Windows.Input;
@@ -11,7 +10,6 @@ namespace MyGamifiedTodoList.ViewModels
     public class TodoListViewModel : BaseViewModel
     {
         private readonly MongoDBService _mongoService;
-        // Add this property to the TodoListViewModel class
         private bool _isBusy;
         public ObservableCollection<TaskModel> Tasks { get; set; }
 
@@ -37,14 +35,12 @@ namespace MyGamifiedTodoList.ViewModels
             CompleteTaskCommand = new Command<TaskModel>(CompleteTask);
             RemoveTaskCommand = new Command<TaskModel>(RemoveTask);
 
-            // Subscribe to the AddTask message
             MessagingCenter.Subscribe<NewTaskViewModel, TaskModel>(this, "AddTask", async (sender, task) =>
             {
                 Tasks.Add(task);
                 await _mongoService.CreateTaskAsync(task);
             });
 
-            // Load tasks when the ViewModel is created
             LoadTasksAsync();
         }
 
@@ -63,7 +59,6 @@ namespace MyGamifiedTodoList.ViewModels
             }
             catch (Exception ex)
             {
-                // Handle errors (log or display message)
                 Console.WriteLine($"Error loading tasks: {ex.Message}");
             }
             finally
@@ -77,7 +72,6 @@ namespace MyGamifiedTodoList.ViewModels
             if (task == null)
                 return;
 
-            // Navigate to TaskDetailsPage and pass the selected task
             await Shell.Current.GoToAsync(nameof(TaskDetailsPage), true, new Dictionary<string, object>
             {
                 { "Task", task }
@@ -88,16 +82,12 @@ namespace MyGamifiedTodoList.ViewModels
         {
             if (Tasks.Contains(task))
             {
-                // Mark as completed
                 task.IsCompleted = true;
 
-                // Update in MongoDB
                 await _mongoService.CompleteTaskAsync(task.Id);
 
-                // Send it to the Archive page
                 MessagingCenter.Send(this, "TaskCompleted", task);
 
-                // Remove it from the active list
                 Tasks.Remove(task);
             }
         }
@@ -106,10 +96,8 @@ namespace MyGamifiedTodoList.ViewModels
         {
             if (Tasks.Contains(task))
             {
-                // Delete from MongoDB
                 await _mongoService.DeleteTaskAsync(task.Id);
 
-                // Remove from UI
                 Tasks.Remove(task);
             }
         }

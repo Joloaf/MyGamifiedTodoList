@@ -1,8 +1,6 @@
 ﻿using MyGamifiedTodoList.Models;
-using System.Collections.ObjectModel;
 using MyGamifiedTodoList.Services;
 using MyGamifiedTodoList.DataManager;
-using System.Threading.Tasks;
 
 namespace MyGamifiedTodoList.ViewModels;
 
@@ -59,7 +57,6 @@ public class ProfileViewModel : BaseViewModel
     {
         _mongoService = Microsoft.Maui.Controls.DependencyService.Get<MongoDBService>();
 
-        // Subscribe to task updates
         MessagingCenter.Subscribe<TodoListViewModel, TaskModel>(this, "TaskCompleted", (sender, task) =>
         {
             UpdateProfileData();
@@ -70,7 +67,6 @@ public class ProfileViewModel : BaseViewModel
             UpdateProfileData();
         });
 
-        // Load initial data
         UpdateProfileData();
     }
 
@@ -78,16 +74,13 @@ public class ProfileViewModel : BaseViewModel
     {
         try
         {
-            // Fetch completed tasks
             var completedTasks = await _mongoService.GetCompletedTasksAsync();
             CompletedTasksCount = completedTasks.Count;
 
-            // Calculate total Experience Points
             TotalExperiencePoints = completedTasks.Sum(task => task.ExperiencePoints);
         }
         catch (Exception ex)
         {
-            // Handle errors (log or display message)
             Console.WriteLine($"Error updating profile data: {ex.Message}");
         }
     }

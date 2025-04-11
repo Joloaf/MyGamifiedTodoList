@@ -1,5 +1,4 @@
-﻿// MyGamifiedTodoList/ViewModels/NewTaskViewModel.cs
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MyGamifiedTodoList.Models;
 using MyGamifiedTodoList.Views;
@@ -72,11 +71,9 @@ namespace MyGamifiedTodoList.ViewModels
             AddTaskCommand = new Command(OnAddTask);
             CancelCommand = new Command(OnCancel);
 
-            // Initialize collections
             Difficulties = new ObservableCollection<string> { "Easy", "Normal", "Hard" };
             Priorities = new ObservableCollection<string> { "Low", "Normal", "High" };
 
-            // Default values
             SelectedDifficulty = "Normal";
             SelectedPriority = "Normal";
         }

@@ -11,9 +11,7 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="Auto, *, Auto">
-        <!-- Top menu is handled by AppShell -->
-
-        <!-- Middle cell: archived tasks -->
+        <!-- Content part of the app -->
         <CollectionView Grid.Row="1" ItemsSource="{Binding ArchivedTasks}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -29,7 +27,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Bottom cell: optional future buttons -->
+        <!-- Extra navigation part of the app... nothing here on this page tho... -->
         <Grid Grid.Row="2" HeightRequest="50" />
     </Grid>
 </ContentPage>

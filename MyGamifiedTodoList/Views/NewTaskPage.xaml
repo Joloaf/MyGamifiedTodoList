@@ -10,8 +10,7 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="Auto, *, Auto" Padding="10">
-        <!-- Top: Menu bar (handled by AppShell, so nothing needed here) -->
-        <!-- Middle: Form -->
+        <!-- Content part of the app -->
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="10">
                 <Entry Placeholder="Title" Text="{Binding Title}" />
@@ -28,7 +27,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Bottom: Buttons -->
+        <!-- Extra navigation part of the app -->
         <HorizontalStackLayout Grid.Row="2" Spacing="10" HorizontalOptions="Center">
             <Button Text="Add Task" Command="{Binding AddTaskCommand}" />
             <Button Text="Cancel" Command="{Binding CancelCommand}" />

@@ -20,7 +20,6 @@ namespace MyGamifiedTodoList.Services
                 var settings = MongoClientSettings.FromConnectionString(connectionString);
                 settings.ServerApi = new ServerApi(ServerApiVersion.V1);
 
-                // Use a longer timeout for initial connection
                 settings.ServerSelectionTimeout = TimeSpan.FromSeconds(30);
 
                 var client = new MongoClient(settings);
